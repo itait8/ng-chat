@@ -3,21 +3,57 @@ import { Auth } from '@angular/fire/auth';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-
 import { User } from '../models/user.interface';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private auth: Auth) {
-    auth = getAuth();
+  private isLoggenIn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
 
+  private userDetails$: Subject<User | undefined> = new Subject<
+    User | undefined
+  >();
+
+  constructor(private auth: Auth, private router: Router) {
+    if (typeof localStorage != 'undefined') {
+      const savedUserString = localStorage.getItem('user');
+      if (savedUserString != null) this.isLoggenIn$.next(true);
+    }
+    auth = getAuth();
     this.auth.useDeviceLanguage();
+    auth.onAuthStateChanged((user) => {
+      if (!!user) {
+        this.userDetails$.next(user as User);
+        const userString = JSON.stringify(user);
+        if (typeof localStorage != 'undefined')
+          localStorage.setItem('user', userString);
+        this.isLoggenIn$.next(true);
+      } else {
+        if (typeof localStorage != 'undefined') localStorage.removeItem('user');
+        this.isLoggenIn$.next(false);
+      }
+    });
   }
 
   public signInWithGoogle() {
     this.authLogin(new GoogleAuthProvider());
+  }
+
+  public signOut(): Promise<void> {
+    return this.auth.signOut().then(() => {
+      if (typeof localStorage != 'undefined') localStorage.removeItem('user');
+      this.router.navigate(['/']);
+      this.userDetails$.next(undefined);
+    });
+  }
+
+  public isLoggenIn(): Observable<boolean> {
+    return this.isLoggenIn$.asObservable();
   }
 
   private authLogin(provider: GoogleAuthProvider) {
@@ -59,6 +95,6 @@ export class AuthService {
       displayName: user.displayName,
       photoURL: user.photoURL,
     };
-    setDoc(userRef, userData, { merge: true });
+    return setDoc(userRef, userData, { merge: true });
   }
 }

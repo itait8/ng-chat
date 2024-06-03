@@ -1,23 +1,13 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MaterialModule } from './material/material.module';
-import { FirebaseApp, FirebaseAppModule } from '@angular/fire/app';
-import { AuthModule } from '@angular/fire/auth';
-import { FirestoreModule } from '@angular/fire/firestore';
 import { AuthService } from './services/auth.service';
+import { HeaderComponent } from './components/header/header.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    MaterialModule,
-    FirebaseAppModule,
-    AuthModule,
-    FirestoreModule,
-  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  imports: [HeaderComponent],
 })
 export class AppComponent {
   title = 'ng-chat';
