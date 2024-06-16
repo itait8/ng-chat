@@ -1,1 +1,7 @@
-<p>room-list works!</p>
+<div class="rooms">
+  <mat-selection-list [multiple]="false">
+    @for (room of rooms; track room) {
+    <mat-list-option [value]="room">{{ room.roomName }}</mat-list-option>
+    }
+  </mat-selection-list>
+</div>

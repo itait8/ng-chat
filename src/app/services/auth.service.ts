@@ -59,10 +59,12 @@ export class AuthService {
   private authLogin(provider: GoogleAuthProvider) {
     return signInWithPopup(this.auth, provider)
       .then((result) => {
+        this.isLoggenIn$.next(true);
         const credentials = GoogleAuthProvider.credentialFromResult(result);
         const token = credentials?.accessToken;
         const user = result.user;
         this.setUserData(user);
+        this.router.navigate(['chat']);
       })
       .catch((error) => {
         const errorCode = error.errorCode;
