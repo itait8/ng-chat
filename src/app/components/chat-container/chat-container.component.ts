@@ -13,9 +13,10 @@ import { CommonModule } from '@angular/common';
   imports: [RoomListComponent, CommonModule],
 })
 export class ChatContainerComponent {
-  public rooms$: Observable<Array<IChatRoom>>;
+  public rooms: Observable<Array<IChatRoom>>;
 
   constructor(private chatService: ChatService) {
-    this.rooms$ = chatService.getRooms();
+    this.rooms = chatService.getRooms();
+    console.log(this.rooms);
   }
 }
