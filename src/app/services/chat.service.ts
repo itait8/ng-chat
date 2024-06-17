@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { IChatRoom } from '../models';
+import { IChatRoom, IMessage } from '../models';
 
 import { collection, doc, getDocs, query } from '@angular/fire/firestore';
 import { FirebaseApp, FirebaseAppModule } from '@angular/fire/app';
@@ -12,7 +12,20 @@ import { getFirestore, onSnapshot } from 'firebase/firestore';
   providedIn: 'root',
 })
 export class ChatService {
-  constructor() {}
+  private db;
+  constructor() {
+    const firebaseConfig = {
+      apiKey: 'AIzaSyBlNGA1P6GKnma1Bj-JExrtrko8WpF8RFQ',
+      authDomain: 'ng-chat-75827.firebaseapp.com',
+      projectId: 'ng-chat-75827',
+      storageBucket: 'ng-chat-75827.appspot.com',
+      messagingSenderId: '732035539523',
+      appId: '1:732035539523:web:4db7a494dbcf5caa35eaf6',
+      measurementId: 'G-HHZYVQYLGE',
+    };
+    const app = initializeApp(firebaseConfig);
+    this.db = getFirestore(app);
+  }
 
   /*   public getRooms(): Observable<Array<IChatRoom>> {
     const firebaseConfig = {
@@ -44,48 +57,46 @@ export class ChatService {
   } */
 
   public getRooms(): Observable<Array<IChatRoom>> {
-    const firebaseConfig = {
-      apiKey: 'AIzaSyBlNGA1P6GKnma1Bj-JExrtrko8WpF8RFQ',
-      authDomain: 'ng-chat-75827.firebaseapp.com',
-      projectId: 'ng-chat-75827',
-      storageBucket: 'ng-chat-75827.appspot.com',
-      messagingSenderId: '732035539523',
-      appId: '1:732035539523:web:4db7a494dbcf5caa35eaf6',
-      measurementId: 'G-HHZYVQYLGE',
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const q = query(collection(db, 'rooms'));
+    const roomsQuery = query(collection(this.db, 'rooms'));
     const rooms: Array<IChatRoom> = [];
-    onSnapshot(q, (docs) => {
+    onSnapshot(roomsQuery, (docs) => {
       docs.docChanges().forEach((change) => {
         const id = change.doc.id;
         const data: IChatRoom = <IChatRoom>change.doc.data();
-        const currRoom = <IChatRoom>{
-          ...data,
-          id,
-        };
-        console.log(currRoom);
+        const currRoom = <IChatRoom>{ ...data, id };
         switch (change.type) {
           case 'added':
             rooms.push(currRoom);
-            console.log('room added at index ', rooms.indexOf(currRoom));
             break;
           case 'modified':
             rooms[rooms.findIndex((elem) => elem.id == currRoom.id)] = currRoom;
-            console.log('room modified at index ', rooms.indexOf(currRoom));
             break;
           case 'removed':
             const index: number = rooms.findIndex(
               (elem) => elem.id == currRoom.id
             );
             rooms.splice(index, 1);
-            console.log('room deleted at index ', index);
             break;
         }
-        console.log(rooms);
       });
     });
     return new BehaviorSubject(rooms).asObservable();
+  }
+
+  public getRoomMessages(roomId: string): Observable<Array<IMessage>> {
+    console.log(roomId);
+    const roomMessagesQuery = query(
+      collection(this.db, 'rooms', roomId, 'messages')
+    );
+    const messages: Array<IMessage> = [];
+    onSnapshot(roomMessagesQuery, (docs) => {
+      docs.docChanges().forEach((change) => {
+        const data: IMessage = <IMessage>change.doc.data();
+        const id: string = change.doc.id;
+        const currMessage: IMessage = { ...data, id };
+        messages.push(currMessage);
+      });
+    });
+    return new BehaviorSubject(messages).asObservable();
   }
 }

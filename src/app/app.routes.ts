@@ -8,11 +8,13 @@ export const routes: Routes = [
     path: 'chat',
     component: ChatContainerComponent,
     canActivate: [AuthGuardService],
-  },
-  {
-    path: 'chat/roomId',
-    component: ChatContainerComponent,
-    canActivate: [AuthGuardService],
+    children: [
+      {
+        path: '**',
+        canActivate: [AuthGuardService],
+        component: ChatContainerComponent,
+      },
+    ],
   },
   {
     path: '',
