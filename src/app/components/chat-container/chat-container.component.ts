@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { RoomListComponent } from '../room-list/room-list.component';
 import { ChatService } from '../../services/chat.service';
 import { Observable, Subscription, filter } from 'rxjs';
@@ -12,6 +12,9 @@ import {
   RouterEvent,
 } from '@angular/router';
 import { Location } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { AddRoomComponent } from '../add-room/add-room.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-chat-container',
@@ -20,9 +23,9 @@ import { Location } from '@angular/common';
   styleUrl: './chat-container.component.scss',
   imports: [RoomListComponent, CommonModule, ChatComponent],
 })
-export class ChatContainerComponent implements OnDestroy {
+export class ChatContainerComponent implements OnDestroy, OnInit {
   private subscription: Subscription = new Subscription();
-
+  private UserId: string = '';
   public rooms$: Observable<Array<IChatRoom>>;
   public messages$: Observable<Array<IMessage>> | undefined;
 
@@ -30,7 +33,9 @@ export class ChatContainerComponent implements OnDestroy {
     private chatService: ChatService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    public dialog: MatDialog,
+    private auth: AuthService
   ) {
     this.rooms$ = chatService.getRooms();
 
@@ -50,7 +55,28 @@ export class ChatContainerComponent implements OnDestroy {
     );
   }
 
+  ngOnInit(): void {
+    this.subscription.add(
+      this.auth
+        .getUserData()
+        .pipe(filter((data) => !!data))
+        .subscribe((user) => (this.UserId = user.uid))
+    );
+  }
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  public openAddRoomModal(): void {
+    const dialogRef = this.dialog.open(AddRoomComponent, {
+      panelClass: 'custom-container',
+    });
+    dialogRef
+      .afterClosed()
+      .subscribe((result) => this.onAddRoom(result, this.UserId));
+  }
+
+  public onAddRoom(roomName: string, userId: string) {
+    this.chatService.addRoom(roomName, userId);
   }
 }

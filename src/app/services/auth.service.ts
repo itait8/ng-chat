@@ -15,9 +15,7 @@ export class AuthService {
     false
   );
 
-  private userDetails$: Subject<User | undefined> = new Subject<
-    User | undefined
-  >();
+  private userDetails$: Subject<User> = new Subject<User>();
 
   constructor(private auth: Auth, private router: Router) {
     if (typeof localStorage != 'undefined') {
@@ -48,12 +46,21 @@ export class AuthService {
     return this.auth.signOut().then(() => {
       if (typeof localStorage != 'undefined') localStorage.removeItem('user');
       this.router.navigate(['/']);
-      this.userDetails$.next(undefined);
+      this.userDetails$.next({
+        uid: '',
+        email: null,
+        displayName: null,
+        photoURL: null,
+      });
     });
   }
 
   public isLoggenIn(): Observable<boolean> {
     return this.isLoggenIn$.asObservable();
+  }
+
+  public getUserData(): Observable<User> {
+    return this.userDetails$.asObservable();
   }
 
   private authLogin(provider: GoogleAuthProvider) {

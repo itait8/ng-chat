@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, merge } from 'rxjs';
 import { IChatRoom, IMessage } from '../models';
 
 import { collection, doc, getDocs, query } from '@angular/fire/firestore';
 import { FirebaseApp, FirebaseAppModule } from '@angular/fire/app';
 import { getDatabase, onValue, ref } from 'firebase/database';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, onSnapshot } from 'firebase/firestore';
+import { addDoc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -98,5 +98,11 @@ export class ChatService {
       });
     });
     return new BehaviorSubject(messages).asObservable();
+  }
+
+  public addRoom(roomName: string, userId: string): void {
+    const newRoomRef = collection(this.db, 'rooms', '');
+    console.log('room name: ', roomName, ', user id: ', userId);
+    addDoc(newRoomRef, { roomName, userId });
   }
 }
