@@ -26,6 +26,7 @@ import { AuthService } from '../../services/auth.service';
 export class ChatContainerComponent implements OnDestroy, OnInit {
   private subscription: Subscription = new Subscription();
   private UserId: string = '';
+  private roomId: string = '';
   public rooms$: Observable<Array<IChatRoom>>;
   public messages$: Observable<Array<IMessage>> | undefined;
 
@@ -39,8 +40,10 @@ export class ChatContainerComponent implements OnDestroy, OnInit {
   ) {
     this.rooms$ = chatService.getRooms();
 
-    const roomId: string = location.path().split('/')[2];
-    //roomId ? (this.messages$ = chatService.getRoomMessages(roomId)) : '';
+    /*     location.path().split('/')[2]!!
+      ? (this.roomId = location.path().split('/')[2])
+      : (this.roomId = '');
+    roomId ? (this.messages$ = chatService.getRoomMessages(roomId)) : ''; */
 
     this.subscription.add(
       router.events
@@ -50,6 +53,7 @@ export class ChatContainerComponent implements OnDestroy, OnInit {
           const urlArr = routeEvent.url.split('/');
           if (urlArr.length > 2) {
             this.messages$ = this.chatService.getRoomMessages(urlArr[2]);
+            this.roomId = urlArr[2];
           }
         })
     );
@@ -78,5 +82,11 @@ export class ChatContainerComponent implements OnDestroy, OnInit {
 
   public onAddRoom(roomName: string, userId: string) {
     this.chatService.addRoom(roomName, userId);
+  }
+
+  public onSendMessage(message: string): void {
+    console.log('room id in chat-container is: ', this.roomId);
+    if (this.UserId && this.roomId)
+      this.chatService.sendMessage(this.UserId, message, this.roomId);
   }
 }

@@ -84,7 +84,6 @@ export class ChatService {
   }
 
   public getRoomMessages(roomId: string): Observable<Array<IMessage>> {
-    console.log(roomId);
     const roomMessagesQuery = query(
       collection(this.db, 'rooms', roomId, 'messages')
     );
@@ -102,7 +101,13 @@ export class ChatService {
 
   public addRoom(roomName: string, userId: string): void {
     const newRoomRef = collection(this.db, 'rooms', '');
-    console.log('room name: ', roomName, ', user id: ', userId);
+
     addDoc(newRoomRef, { roomName, userId });
+  }
+
+  public sendMessage(userId: string, body: string, roomId: string) {
+    console.log('room id is: ', roomId, 'userId is:', userId);
+    const messagesRef = collection(this.db, 'rooms', roomId, 'messages');
+    addDoc(messagesRef, { body, userId, timestamp: new Date().getTime() });
   }
 }
