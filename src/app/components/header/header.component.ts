@@ -3,11 +3,12 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { MaterialModule } from '../../material/material.module';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MaterialModule, AsyncPipe, NgIf],
+  imports: [MaterialModule, AsyncPipe, NgIf, RouterModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

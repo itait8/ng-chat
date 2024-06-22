@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ChatComponent } from '../chat/chat.component';
 import {
   ActivatedRoute,
+  ActivationEnd,
   NavigationEnd,
   Router,
   RouterEvent,
@@ -85,7 +86,6 @@ export class ChatContainerComponent implements OnDestroy, OnInit {
   }
 
   public onSendMessage(message: string): void {
-    console.log('room id in chat-container is: ', this.roomId);
     if (this.UserId && this.roomId)
       this.chatService.sendMessage(this.UserId, message, this.roomId);
   }

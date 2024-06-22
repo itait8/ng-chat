@@ -1,11 +1,39 @@
-<div class="chat">
-  <div class="chat__messages">
-    <div class="chat__message" *ngFor="let message of messages">
-      {{ message | json }}
+<div class="chat" *ngIf="messages.length > 0">
+  <div class="chat__case">
+    <div class="chat__earsection">
+      <div class="chat__camera"></div>
+      <div class="chat__speaker"></div>
     </div>
-  </div>
-  <div class="chat__form">
-    <input type="text" #newMessage />
-    <button type="button" (click)="sendMessage(newMessage.value)">SEND</button>
+    <div class="chat__screen">
+      <div class="chat__messages" *ngIf="messages.length > 0">
+        <cdk-virtual-scroll-viewport
+          appendOnly
+          itemSize="15"
+          class="chat__scroller"
+          #virtualScroll
+        >
+          <div *cdkVirtualFor="let message of messages" class="chat__message">
+            {{ message.body }}
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
+      <div class="chat__form">
+        <mat-form-field class="example-full-width">
+          <mat-label>Send message</mat-label>
+          <input matInput #newMessage placeholder="Your Message" value="" />
+        </mat-form-field>
+        <button
+          mat-mini-fab
+          color="primary"
+          type="button"
+          (click)="sendMessage(newMessage.value, newMessage)"
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="chat__button">
+      <div class="chat__buttonsquare"></div>
+    </div>
   </div>
 </div>

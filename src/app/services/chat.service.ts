@@ -106,8 +106,7 @@ export class ChatService {
   }
 
   public sendMessage(userId: string, body: string, roomId: string) {
-    console.log('room id is: ', roomId, 'userId is:', userId);
     const messagesRef = collection(this.db, 'rooms', roomId, 'messages');
-    addDoc(messagesRef, { body, userId, timestamp: new Date().getTime() });
+    addDoc(messagesRef, { body, userId, timeStamp: new Date().getTime() });
   }
 }
