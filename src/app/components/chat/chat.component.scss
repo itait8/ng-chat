@@ -7,10 +7,10 @@
     padding: 0px 4px;
   }
   &__message {
-    height: 50px;
-    background-color: #bdbdbd;
     border-radius: 5px;
     margin: 5px 0;
+    min-height: 20px;
+    padding: 10px;
     &--current-user {
       background-color: #9aff9f;
       margin-right: 30px;
