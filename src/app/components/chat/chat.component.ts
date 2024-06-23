@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material/material.module';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Observable, timeout } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-chat',
@@ -46,8 +47,10 @@ export class ChatComponent implements OnInit {
       }),
     ];
   }
-
-  constructor() {}
+  public userId: string = '';
+  constructor(private authService: AuthService) {
+    authService.getUserData().subscribe((user) => (this.userId = user.uid));
+  }
 
   ngOnInit(): void {}
 

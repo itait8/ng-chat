@@ -16,6 +16,7 @@ export class AuthService {
   );
 
   private userDetails$: Subject<User> = new Subject<User>();
+  private userId: string = '';
 
   constructor(private auth: Auth, private router: Router) {
     if (typeof localStorage != 'undefined') {
@@ -31,6 +32,7 @@ export class AuthService {
         if (typeof localStorage != 'undefined')
           localStorage.setItem('user', userString);
         this.isLoggenIn$.next(true);
+        this.userId = user.uid;
       } else {
         if (typeof localStorage != 'undefined') localStorage.removeItem('user');
         this.isLoggenIn$.next(false);
@@ -78,7 +80,6 @@ export class AuthService {
         const errorMessage = error.errorMessage;
         const email = error.email;
         const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log(error);
       });
   }
 
