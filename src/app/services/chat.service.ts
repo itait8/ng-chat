@@ -7,6 +7,7 @@ import { FirebaseApp, FirebaseAppModule } from '@angular/fire/app';
 import { getDatabase, onValue, ref } from 'firebase/database';
 import { initializeApp } from 'firebase/app';
 import { addDoc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore';
+import { firebaseConfig } from '../../enviroment/enviroment';
 
 @Injectable({
   providedIn: 'root',
@@ -14,15 +15,6 @@ import { addDoc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore';
 export class ChatService {
   private db;
   constructor() {
-    const firebaseConfig = {
-      apiKey: 'AIzaSyBlNGA1P6GKnma1Bj-JExrtrko8WpF8RFQ',
-      authDomain: 'ng-chat-75827.firebaseapp.com',
-      projectId: 'ng-chat-75827',
-      storageBucket: 'ng-chat-75827.appspot.com',
-      messagingSenderId: '732035539523',
-      appId: '1:732035539523:web:4db7a494dbcf5caa35eaf6',
-      measurementId: 'G-HHZYVQYLGE',
-    };
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
   }
