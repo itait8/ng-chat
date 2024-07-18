@@ -1,0 +1,47 @@
+<div class="chat">
+  <div class="chat__case">
+    <div class="chat__earsection">
+      <div class="chat__camera"></div>
+      <div class="chat__speaker"></div>
+    </div>
+    <div class="chat__screen">
+      <div class="chat__messages">
+        <cdk-virtual-scroll-viewport
+          *ngIf="messages.length > 0"
+          appendOnly
+          itemSize="15"
+          class="chat__scroller"
+          #virtualScroll
+        >
+          <div
+            *cdkVirtualFor="let message of messages"
+            class="chat__message"
+            [ngClass]="{
+              'chat__message--current-user': userId === message.userId,
+              'chat__message--other-user': userId !== message.userId
+            }"
+          >
+            {{ message.body }}
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
+      <div class="chat__form">
+        <mat-form-field class="example-full-width">
+          <mat-label>Send message</mat-label>
+          <input matInput #newMessage placeholder="Your Message" value="" />
+        </mat-form-field>
+        <button
+          mat-mini-fab
+          color="primary"
+          type="button"
+          (click)="sendMessage(newMessage.value, newMessage)"
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="chat__button">
+      <div class="chat__buttonsquare"></div>
+    </div>
+  </div>
+</div>
